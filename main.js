@@ -145,7 +145,9 @@ function startGame(settingsOrLevelIndex) {
     gameOverMenu.style.display = 'none';
     demoManager = null; 
 
-    mainTitle.classList.add('ingame-title');
+    // MODIFIED: Hide the main title completely during gameplay
+    // instead of moving it.
+    mainTitle.style.display = 'none';
 
     boundaryHandler = new BoundaryHandler();
     boundaryCtx.clearRect(0, 0, boundaryCanvas.width, boundaryCanvas.height);

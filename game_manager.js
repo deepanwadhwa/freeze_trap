@@ -244,18 +244,27 @@ export class GameManager {
     drawUI(ctx, canvas) {
         if (this.isDemo) return;
         ctx.save();
-        ctx.font = "20px 'Press Start 2P', cursive";
+        
+        // Dynamic UI sizing based on screen width
+        const isMobile = canvas.width <= 768;
+        const uiFontSize = isMobile ? 16 : 20;
+        // MODIFIED: Use a clean, fixed Y position now that the HTML title is hidden
+        const uiYPosition = 35; 
+        const uiXMargin = isMobile ? 15 : 20;
+
+        ctx.font = `${uiFontSize}px 'Press Start 2P', cursive`;
         ctx.fillStyle = "#0f172a";
         ctx.shadowColor = "transparent";
         ctx.shadowBlur = 0;
 
         ctx.textAlign = "left";
-        // MODIFIED: Moved the timer to the top-left (y=40) to avoid overlap with controls on mobile.
-        ctx.fillText(`Time: ${this.timeRemaining}`, 20, 40);
+        // Uses dynamic variables for responsive positioning
+        ctx.fillText(`Time: ${this.timeRemaining}`, uiXMargin, uiYPosition);
 
         ctx.textAlign = "right";
         const drawsText = this.drawsRemaining === Infinity ? '∞' : this.drawsRemaining;
-        ctx.fillText(`${this.levelName}   Draws: ${drawsText}`, canvas.width - 20, 40);
+        // Uses dynamic variables for responsive positioning
+        ctx.fillText(`${this.levelName}   Draws: ${drawsText}`, canvas.width - uiXMargin, uiYPosition);
         
         ctx.restore();
 

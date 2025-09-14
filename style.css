@@ -169,3 +169,11 @@ h1 {
     transform: translateX(0); /* Reset the centering transform */
     font-size: 24px;
 }
+
+@media (max-width: 768px) {
+    .ingame-title {
+        font-size: 18px; /* Use a smaller font on mobile */
+        top: 8px;        /* Adjust position slightly */
+        left: 15px;
+    }
+}
