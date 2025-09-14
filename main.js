@@ -233,10 +233,25 @@ document.getElementById('btn-restart').onclick = () => {
     }
 };
 
-gameCanvas.addEventListener('mousemove', e => {
-    const scaledPos = getScaledMousePos(gameCanvas, e);
-    mousePos.x = scaledPos.x;
-    mousePos.y = scaledPos.y;
+
+// --- NEW/REFACTORED Pointer (Mouse + Touch) Event Logic ---
+
+function handlePointerDown(pos) {
+    // Update mousePos for repulsion logic on the very first frame of touch/click
+    mousePos.x = pos.x;
+    mousePos.y = pos.y;
+
+    if (gameState === 'PLAYING' && gameManager.drawsRemaining > 0) {
+        isDrawing = true;
+        currentLine = [pos];
+        currentLineLength = 0;
+        drawingColor = CRAYON_COLORS[Math.floor(Math.random() * CRAYON_COLORS.length)];
+    }
+}
+
+function handlePointerMove(pos) {
+    mousePos.x = pos.x;
+    mousePos.y = pos.y;
     if (isDrawing) {
         const lastPoint = currentLine[currentLine.length - 1];
         if (Math.hypot(mousePos.x - lastPoint.x, mousePos.y - lastPoint.y) > 10) {
@@ -246,16 +261,7 @@ gameCanvas.addEventListener('mousemove', e => {
             if (currentLineLength >= gameManager.settings.maxLineLength) stopDrawing();
         }
     }
-});
-
-gameCanvas.addEventListener('mousedown', e => {
-    if (gameState === 'PLAYING' && gameManager.drawsRemaining > 0) {
-        isDrawing = true;
-        currentLine = [getScaledMousePos(gameCanvas, e)];
-        currentLineLength = 0;
-        drawingColor = CRAYON_COLORS[Math.floor(Math.random() * CRAYON_COLORS.length)];
-    }
-});
+}
 
 function stopDrawing() {
     if (!isDrawing) return;
@@ -271,8 +277,35 @@ function stopDrawing() {
     currentLine = [];
     currentLineLength = 0;
 }
+
+// MOUSE EVENTS
+gameCanvas.addEventListener('mousedown', e => {
+    handlePointerDown(getScaledMousePos(gameCanvas, e));
+});
+gameCanvas.addEventListener('mousemove', e => {
+    handlePointerMove(getScaledMousePos(gameCanvas, e));
+});
 gameCanvas.addEventListener('mouseup', stopDrawing);
 gameCanvas.addEventListener('mouseleave', stopDrawing);
+
+// TOUCH EVENTS
+gameCanvas.addEventListener('touchstart', e => {
+    e.preventDefault(); // Prevents page scrolling
+    if (e.touches[0]) {
+        handlePointerDown(getScaledMousePos(gameCanvas, e.touches[0]));
+    }
+}, { passive: false });
+
+gameCanvas.addEventListener('touchmove', e => {
+    e.preventDefault(); // Prevents page scrolling
+    if (e.touches[0]) {
+        handlePointerMove(getScaledMousePos(gameCanvas, e.touches[0]));
+    }
+}, { passive: false });
+
+gameCanvas.addEventListener('touchend', e => {
+    stopDrawing();
+});
 
 
 // --- DRAWING & GAME LOOP ---

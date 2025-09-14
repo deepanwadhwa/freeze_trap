@@ -250,8 +250,8 @@ export class GameManager {
         ctx.shadowBlur = 0;
 
         ctx.textAlign = "left";
-        // MODIFIED: Changed the Y-coordinate to draw the timer at the bottom of the canvas
-        ctx.fillText(`Time: ${this.timeRemaining}`, 20, canvas.height - 30);
+        // MODIFIED: Moved the timer to the top-left (y=40) to avoid overlap with controls on mobile.
+        ctx.fillText(`Time: ${this.timeRemaining}`, 20, 40);
 
         ctx.textAlign = "right";
         const drawsText = this.drawsRemaining === Infinity ? '∞' : this.drawsRemaining;
